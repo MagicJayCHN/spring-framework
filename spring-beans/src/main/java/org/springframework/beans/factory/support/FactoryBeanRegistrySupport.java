@@ -142,7 +142,7 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 				return object;
 			}
 		} else {
-            // 为空，则从 FactoryBean 中获取对象
+            // 非singleton的工厂bean，则从 FactoryBean 中获取对象
             Object object = doGetObjectFromFactoryBean(factory, beanName);
             // 需要后续处理
             if (shouldPostProcess) {

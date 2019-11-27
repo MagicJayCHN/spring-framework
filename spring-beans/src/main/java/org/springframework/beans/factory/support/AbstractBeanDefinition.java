@@ -150,6 +150,8 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	private int dependencyCheck = DEPENDENCY_CHECK_NONE;
 
+
+	//这里只会存放<bean/>标签的depends-on属性或是@DependsOn注解的值
 	@Nullable
 	private String[] dependsOn;
 
@@ -194,6 +196,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	private boolean enforceDestroyMethod = true;
 
+	//人工合成的，非应用本身的
 	private boolean synthetic = false;
 
 	private int role = BeanDefinition.ROLE_APPLICATION;
@@ -1091,6 +1094,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 * @throws BeanDefinitionValidationException in case of validation failure
 	 */
 	protected void prepareMethodOverride(MethodOverride mo) throws BeanDefinitionValidationException {
+		//诚然，其实 mbdToUse.prepareMethodOverrides() 代码块，并没有做什么实质性的工作，只是对 methodOverrides 属性做了一些简单的校验
 		int count = ClassUtils.getMethodCountForName(getBeanClass(), mo.getMethodName());
 		if (count == 0) {
 			throw new BeanDefinitionValidationException(

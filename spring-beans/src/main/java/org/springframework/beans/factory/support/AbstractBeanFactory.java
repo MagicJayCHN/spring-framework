@@ -227,7 +227,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		} else {
 			// Fail if we're already creating this bean instance:
 			// We're assumably within a circular reference.
-            // 因为 Spring 只解决单例模式下得循环依赖，在原型模式下如果存在循环依赖则会抛出异常。
+            // 因为 Spring 只解决单例模式下得循环依赖，多半是由于循环依赖导致该问题
 			if (isPrototypeCurrentlyInCreation(beanName)) {
 				throw new BeanCurrentlyInCreationException(beanName);
 			}
@@ -272,7 +272,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				String[] dependsOn = mbd.getDependsOn();
 				if (dependsOn != null) {
 					for (String dep : dependsOn) {
-                        // 若给定的依赖 bean 已经注册为依赖给定的 bean
+                        // 若给定的依赖 bean 已经注册为依赖给定的 bean，
                         // 即循环依赖的情况，抛出 BeanCreationException 异常
 						if (isDependent(beanName, dep)) {
 							throw new BeanCreationException(mbd.getResourceDescription(), beanName,
@@ -1612,7 +1612,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		}
 
         // 到这里我们就有了一个 Bean 实例，当然该实例可能是会是是一个正常的 bean 又或者是一个 FactoryBean
-        // 如果是 FactoryBean，我我们则创建该 Bean
+        // 如果是 FactoryBean，我们则创建该 Bean，除非调用者想要的就是该FactoryBean
 		// Now we have the bean instance, which may be a normal bean or a FactoryBean.
 		// If it's a FactoryBean, we use it to create a bean instance, unless the
 		// caller actually wants a reference to the factory.
@@ -1639,7 +1639,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
             // 是否是用户定义的，而不是应用程序本身定义的
             boolean synthetic = (mbd != null && mbd.isSynthetic());
-            // 核心处理方法，使用 FactoryBean 获得 Bean 对象
+            // 核心处理方法，使用 FactoryBean 获得 Bean 对象,
+			//1.object = doGetObjectFromFactoryBean(factory, beanName);
+			//2.object = postProcessObjectFromFactoryBean(object, beanName);
             object = getObjectFromFactoryBean(factory, beanName, !synthetic);
 		}
 		return object;

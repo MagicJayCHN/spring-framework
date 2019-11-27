@@ -417,6 +417,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 				}
 			}
             // 处理首个 Match 对象
+			// RequestMappingInfoHandlerMapping对该方法进行了重写，将request中一些url请求kv转为Map放到request域中，方便以后存取
 			handleMatch(bestMatch.mapping, lookupPath, request);
             // 返回首个 Match 对象的 handlerMethod 属性
 			return bestMatch.handlerMethod;

@@ -312,6 +312,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	 * Initializes the interceptors.
 	 * @see #extendInterceptors(java.util.List)
 	 * @see #initInterceptors()
+	 *
 	 */
 	@Override
 	protected void initApplicationContext() throws BeansException {
@@ -346,7 +347,8 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	 */
 	protected void detectMappedInterceptors(List<HandlerInterceptor> mappedInterceptors) {
         // 扫描已注册的 MappedInterceptor 的 Bean 们，添加到 mappedInterceptors 中
-        // MappedInterceptor 会根据请求路径做匹配，是否进行拦截。
+		// MappedInterceptor implements HandlerInterceptor，这类拦截器（会根据请求路径做匹配，是否进行拦截）只需要配置为bean则会自动注册为HandlerMapping中的adaptedInterceptors
+		//而其他类型的拦截器如HandlerInterceptor或WebRequestInterceptor则需要进行手动注册，通常做法是实现WebMvcConfigurerAdapter的addInterceptors进行注册添加，并@EnableWebMvc
 		mappedInterceptors.addAll(
 				BeanFactoryUtils.beansOfTypeIncludingAncestors(
 						obtainApplicationContext(), MappedInterceptor.class, true, false).values());
@@ -370,7 +372,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 				if (interceptor == null) { // 若为空，抛出 IllegalArgumentException 异常
 					throw new IllegalArgumentException("Entry number " + i + " in interceptors array is null");
 				}
-                // 将 interceptors 初始化成 HandlerInterceptor 类型，添加到 mappedInterceptors 中
+                // 将 interceptors 初始化成 HandlerInterceptor 类型，添加到 adaptedInterceptors 中
                 // 注意，HandlerInterceptor 无需进行路径匹配，直接拦截全部
 				this.adaptedInterceptors.add(adaptInterceptor(interceptor));
 			}

@@ -560,13 +560,11 @@ class ConstructorResolver {
 					}
 
                     // isLenientConstructorResolution 判断解析构造函数的时候是否以宽松模式还是严格模式
-                    // 严格模式：解析构造函数时，必须所有的都需要匹配，否则抛出异常
-                    // 宽松模式：使用具有"最接近的模式"进行匹配
                     // typeDiffWeight：类型差异权重
 					int typeDiffWeight = (mbd.isLenientConstructorResolution() ?
 							argsHolder.getTypeDifferenceWeight(paramTypes) : argsHolder.getAssignabilityWeight(paramTypes));
 					// Choose this factory method if it represents the closest match.
-                    // 代表最接近的类型匹配，则选择作为构造函数
+                    // 选取最小的权重的类型匹配，则选择作为构造函数
 					if (typeDiffWeight < minTypeDiffWeight) {
 						factoryMethodToUse = candidate;
 						argsHolderToUse = argsHolder;
@@ -579,8 +577,8 @@ class ConstructorResolver {
 					// and eventually raise an ambiguity exception.
 					// However, only perform that check in non-lenient constructor resolution mode,
 					// and explicitly ignore overridden methods (with the same parameter signature).
-                    // 如果具有相同参数数量的方法具有相同的类型差异权重，则收集此类型选项
-                    // 但是，仅在非宽松构造函数解析模式下执行该检查，并显式忽略重写方法（具有相同的参数签名）
+                    // 在非宽松构造函数解析模式下执行该检查，
+					// 如果具有相同参数数量的方法具有相同的类型差异权重，则收集此类型选项，用以后续抛出异常
 					else if (factoryMethodToUse != null && typeDiffWeight == minTypeDiffWeight &&
 							!mbd.isLenientConstructorResolution() &&
 							paramTypes.length == factoryMethodToUse.getParameterCount() &&

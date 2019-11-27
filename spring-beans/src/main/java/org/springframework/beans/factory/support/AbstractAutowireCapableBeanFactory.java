@@ -1153,7 +1153,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// Preferred constructors for default construction?
-        // 选择构造方法，创建 Bean 。
+        // 选择构造方法，创建 Bean 。这个只对kotlin有效，java默认返回null
 		ctors = mbd.getPreferredConstructors();
 		if (ctors != null) {
 			return autowireConstructor(beanName, mbd, ctors, null); // args = null
